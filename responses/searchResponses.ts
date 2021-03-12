@@ -1,4 +1,4 @@
-var albumTracksResponse = {
+export const albumTracksResponse = {
   "href": "https://api.spotify.com/v1/albums/2kZonOzsrnp9H9gMxUUfqr/tracks?offset=0&limit=10",
   "items": [
     {
@@ -2109,7 +2109,7 @@ var albumTracksResponse = {
   "total": 260
 }
 
-var albumSearchResponse = {
+export const albumSearchResponse = {
   "albums": {
     "href": "https://api.spotify.com/v1/search?query=Edward+Snowden&type=album&offset=0&limit=20",
     "items": [
@@ -3839,9 +3839,4 @@ var albumSearchResponse = {
     "previous": null,
     "total": 8
   }
-}
-
-module.exports = {
-  albumSearchResponse,
-  albumTracksResponse,
 }
