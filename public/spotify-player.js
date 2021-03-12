@@ -1,6 +1,22 @@
 var Spotify = {};
-
 Spotify.Player = function (options) {
+  var socket = new WebSocket("ws://localhost:3334");
+  socket.onopen = (event) => {
+    console.log('websocket open');
+  };
+  socket.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      console.log(data);
+      console.log(this.onCallbacks);
+      if (data.on && this.onCallbacks[data.on]) {
+        this.onCallbacks[data.on](data.payload);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   console.log('player options', options);
   this.onCallbacks = {};
 
@@ -22,7 +38,12 @@ Spotify.Player = function (options) {
     return true;
   };
 
-  this.player.getCurrentState = () => {
+  this.player.getCurrentState = async () => {
+    return null;
+  }
+
+  this.player.pause = async () => {
+    const response = await fetch('http://localhost:3333/v1/me/player/pause', {method: 'PUT'});
     return null;
   }
 
