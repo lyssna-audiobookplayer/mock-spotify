@@ -3,7 +3,7 @@ import {
   albumTracksResponse,
 } from '../responses/searchResponses';
 
-export function createPlaybackState(paused: boolean, trackId?: string) {
+export function createPlaybackState(paused: boolean, trackId?: string, position: number = 0) {
   let index = albumTracksResponse.items.findIndex(track => track.id === trackId);
   console.log(trackId, index);
   index = index >= 0 ? index : 0;
@@ -23,7 +23,7 @@ export function createPlaybackState(paused: boolean, trackId?: string) {
       next_tracks: [],
     },
     duration: track.duration_ms,
-    position: 5000,
+    position: position,
     paused,
   };
 

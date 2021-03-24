@@ -11,6 +11,8 @@ import WebSocket from 'ws';
 const wss = new WebSocket.Server({ port: 3334 });
 let openWs: any;
 
+let paused = true;
+
 wss.on('connection', function connection(ws: any) {
   console.log('WS connected');
   openWs = ws;
@@ -36,9 +38,10 @@ router.put('/v1/me/player/play', function (req, res, next) {
   const trackId = req.body.offset.uri.split(':')[2];
   res.send();
 
+  paused = false;
   const wsResponse = {
     on: 'player_state_changed',
-    payload: createPlaybackState(false, trackId),
+    payload: createPlaybackState(paused, trackId),
   };
   openWs.send(JSON.stringify(wsResponse));
 });
@@ -47,9 +50,47 @@ router.put('/v1/me/player/play', function (req, res, next) {
 router.put('/v1/me/player/pause', function (req, res, next) {
   res.send();
 
+  paused = true;
   const wsResponse = {
     on: 'player_state_changed',
-    payload: createPlaybackState(true),
+    payload: createPlaybackState(paused),
+  };
+  openWs.send(JSON.stringify(wsResponse));
+});
+
+// Internally used for spotify-player.js
+router.put('/v1/me/player/seek', function (req, res, next) {
+  const position = req.body.position;
+  console.log(req.body);
+  res.send();
+
+  const wsResponse = {
+    on: 'player_state_changed',
+    payload: createPlaybackState(paused, undefined, position),
+  };
+  openWs.send(JSON.stringify(wsResponse));
+});
+
+// Internally used for spotify-player.js
+router.get('/v1/me/player/currentstate', function (req, res, next) {
+
+  const wsResponse = {
+    on: 'player_state_changed',
+    payload: createPlaybackState(paused),
+  };
+  res.json(wsResponse);
+});
+
+// initialization_error
+// authentication_error
+// account_error
+// playback_error
+router.get('/debug/initialization_error', function (req, res, next) {
+  res.send();
+
+  const wsResponse = {
+    on: 'initialization_error',
+    payload: 'mocked error',
   };
   openWs.send(JSON.stringify(wsResponse));
 });

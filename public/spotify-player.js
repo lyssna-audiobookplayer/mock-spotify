@@ -1,6 +1,6 @@
 var Spotify = {};
 Spotify.Player = function (options) {
-  var socket = new WebSocket("ws://localhost:3334");
+  var socket = new WebSocket('ws://localhost:3334');
   socket.onopen = (event) => {
     console.log('websocket open');
   };
@@ -33,17 +33,29 @@ Spotify.Player = function (options) {
   };
   this.player.connect = async () => {
     if (this.onCallbacks['ready']) {
-      this.onCallbacks['ready']({ device_id: 'fake_device_id' });
+      this.onCallbacks['ready']({device_id: 'fake_device_id'});
     }
     return true;
   };
 
   this.player.getCurrentState = async () => {
-    return null;
+    const data = await fetch('http://localhost:3333/v1/me/player/currentstate').then(response => response.json());
+    console.log('getCurrentState', data);
+    return data.payload;
   }
 
   this.player.pause = async () => {
     const response = await fetch('http://localhost:3333/v1/me/player/pause', {method: 'PUT'});
+    return null;
+  }
+
+  this.player.seek = async (position) => {
+    const response = await fetch('http://localhost:3333/v1/me/player/seek', {
+      method: 'PUT', headers: {
+        'Content-Type': 'application/json'
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      }, body: JSON.stringify({position}),
+    });
     return null;
   }
 
